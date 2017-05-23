@@ -34,7 +34,6 @@ func main() {
 		log.Panic(err)
 	}
 
-
 	bot.Debug = false
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
@@ -83,8 +82,7 @@ func main() {
 			//println(file.FilePath)
 			link := file.Link(config.Token)
 			println(link);
-			body := strings.NewReader(link)
-			resp, err := http.Post("http://example.com/upload", "application/json", body)
+			resp, err := http.Post("http://example.com:8080/api/v1/upload", "application/json", strings.NewReader(link))
 
 			if err != nil {
 				text := "Proxy doesn't respond"
@@ -96,15 +94,11 @@ func main() {
 				continue
 			}
 
-			println(resp.Body)
-
 			defer resp.Body.Close()
 
-			var target string
+			body, _ := ioutil.ReadAll(resp.Body)
 
-			json.NewDecoder(resp.Body).Decode(target)
-
-			var text = "Get response " + target
+			var text = "Get response " + string(body)
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
 			bot.Send(msg)
 			last = "";
