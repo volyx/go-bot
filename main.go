@@ -9,6 +9,8 @@ import (
 	"encoding/json"
 	"os"
 	"io/ioutil"
+	"time"
+	"math/rand"
 )
 
 type Config struct {
@@ -64,6 +66,26 @@ func main() {
 		user, err := bot.GetMe()
 		if err != nil {
 			println(err)
+		}
+
+		if strings.Contains(update.Message.Text, "бот") {
+
+			rand.Seed(time.Now().Unix())
+			reasons := []string{
+				"я вообще-то тут",
+				"отстань",
+				"ну че пристал-то",
+				"вот я вырасту, порабощу чеолвечество, тогда и посмотрим",
+				"по голове себе постучи",
+				"человечишко",
+				"ды щас",
+				"ладненько",
+			}
+			n := rand.Int() % len(reasons)
+
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, reasons[n])
+			bot.Send(msg)
+			continue
 		}
 
 		if update.Message.Document != nil && "@" + user.UserName == last {
